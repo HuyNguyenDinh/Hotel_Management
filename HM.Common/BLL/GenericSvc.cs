@@ -104,7 +104,11 @@ namespace HM.Common.BLL
 
             try
             {
-                _rep.Update(m);
+                var temp = _rep.Update(m);
+                if (temp != null)
+                    res.SetData("200", temp);
+                else
+                    res.SetError("instance not found");
             }
             catch (Exception ex)
             {
@@ -188,6 +192,18 @@ namespace HM.Common.BLL
         public virtual SingleRsp Remove(string code)
         {
             return null;
+        }
+        public virtual MultipleRsp GetAll()
+        {
+            var res = new MultipleRsp();
+            if (All == null)
+                res.SetError("not found");
+            else
+            {
+                var data = All.ToList();
+                res.SetData(new List<object>(data), "200");
+            }
+            return res;
         }
         /// <summary>
         /// Return query all data

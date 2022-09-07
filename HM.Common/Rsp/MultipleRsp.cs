@@ -33,14 +33,14 @@ namespace HM.Common.Rsp
         /// </summary>
         /// <param name="key">Key</param>
         /// <param name="o">Data</param>
-        public void SetData(string key, object o)
+        public void SetData(List<object> o, string code)
         {
             if (Data == null)
             {
-                Data = new Dictionary<string, object>();
+                Data = new List<object>();
             }
-
-            Data.Add(key, o);
+            Code = code;
+            Data.AddRange(o);
         }
 
         /// <summary>
@@ -48,11 +48,11 @@ namespace HM.Common.Rsp
         /// </summary>
         /// <param name="o">Data</param>
         /// <param name="message">Message</param>
-        public void SetSuccess(object o, string message)
+        public void SetSuccess(List<object> o, string message)
         {
             var t = new Dto(o, message);
 
-            SetData("success", t);
+            SetData(t.Data, "success");
         }
 
         /// <summary>
@@ -60,11 +60,11 @@ namespace HM.Common.Rsp
         /// </summary>
         /// <param name="o">Data</param>
         /// <param name="message">Message</param>
-        public void SetFailure(object o, string message)
+        public void SetFailure(List<object> o, string message)
         {
             var t = new Dto(o, message);
 
-            SetData("failure", t);
+            SetData(t.Data, "failure");
         }
 
         #endregion
@@ -74,7 +74,7 @@ namespace HM.Common.Rsp
         /// <summary>
         /// Data
         /// </summary>
-        public Dictionary<string, object> Data { get; private set; }
+        public List<object> Data { get; private set; }
 
         #endregion
 
@@ -92,7 +92,7 @@ namespace HM.Common.Rsp
             /// </summary>
             /// <param name="data">Data</param>
             /// <param name="message">Message</param>
-            public Dto(object data, string message)
+            public Dto(List<object> data, string message)
             {
                 Data = data;
                 Message = message;
@@ -105,7 +105,7 @@ namespace HM.Common.Rsp
             /// <summary>
             /// Data
             /// </summary>
-            public object Data { get; private set; }
+            public List<object> Data { get; private set; }
 
             /// <summary>
             /// Message

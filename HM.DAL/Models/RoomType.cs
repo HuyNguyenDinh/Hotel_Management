@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace HM.DAL.Models
 {
@@ -10,9 +11,9 @@ namespace HM.DAL.Models
             Rooms = new HashSet<Room>();
         }
 
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Name { get; set; } = null!;
-
+        [JsonIgnore]
         public virtual ICollection<Room> Rooms { get; set; }
     }
 }

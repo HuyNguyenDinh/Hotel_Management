@@ -203,7 +203,16 @@ namespace HM.Common.DAL
             }
             return o;
         }
-
+        ///<summary>Delete the model</summary>
+        ///<param>string code</param>
+        public virtual T? Delete(int id)
+        {
+            return null;
+        }
+        public virtual T? Delete(string id)
+        {
+            return null;
+        }
         #endregion
 
         #region -- Properties --

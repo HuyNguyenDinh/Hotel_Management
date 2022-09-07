@@ -11,7 +11,7 @@ namespace HM.DAL.Models
             Ratings = new HashSet<Rating>();
         }
 
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int Bed { get; set; }
         public double Price { get; set; }
         public bool? IsFree { get; set; }

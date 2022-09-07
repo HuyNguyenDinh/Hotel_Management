@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace HM.DAL.Models
 {
@@ -16,9 +17,11 @@ namespace HM.DAL.Models
         public string? LastName { get; set; }
         public string PhoneNumber { get; set; } = null!;
         public string? Email { get; set; }
-
-        public virtual Account Account { get; set; } = null!;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual Account? Account { get; set; } = null!;
+        [JsonIgnore]
         public virtual ICollection<Booking> Bookings { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Rating> Ratings { get; set; }
     }
 }

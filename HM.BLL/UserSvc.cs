@@ -13,32 +13,10 @@ namespace HM.BLL
 {
     public class UserSvc : GenericSvc<UserRep, User>
     {
-        UserRep userRep = new UserRep();
-        
-        public MultipleUserRsp Read()
+        public override SingleRsp Read(string code)
         {
-            var res = new MultipleUserRsp();
-            if (All == null)
-                res.SetError("not found");
-            else
-            {
-                var data = All.Select(u => new UserReq
-                {
-                    IdentificationCode = u.IdentificationCode,
-                    Email = u.Email,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    PhoneNumber = u.PhoneNumber
-                });
-                res.SetData(data.ToList());
-            }
-                
-            return res;
-        }
-        public override UserRsp Read(string code)
-        {
-            var res = new UserRsp();
-            var m = userRep.Read(code);
+            var res = new SingleRsp();
+            var m = _rep.Read(code);
             if (m == null)
                 res.SetError("404", "not found");
             else
@@ -54,22 +32,41 @@ namespace HM.BLL
             }
             return res;
         }
-        public UserRsp CreateUser(UserReq userReq)
+        public SingleRsp CreateUser(UserReq userReq)
         {
-            User user = new User
+            User? user = new()
             {
                 IdentificationCode = userReq.IdentificationCode,
-                Email = userReq.Email,
                 FirstName = userReq.FirstName,
                 LastName = userReq.LastName,
+                Email = userReq.Email,
                 PhoneNumber = userReq.PhoneNumber
             };
-            var res = new UserRsp();
-            var m = Create(user);
-            if (m.Success)
-                res.SetData("201", userReq);
+            var res = Create(user);
+            return res;
+        }
+        public override SingleRsp Delete(string code)
+        {
+            User? m = _rep.Delete(code);
+            var res = new SingleRsp();
+            if (m == null)
+                res.SetError("NotFound");
             else
-                res.SetError("cannot add user, please check Identification");
+                res.SetData("204", m);
+            return res;
+        }
+        public SingleRsp Replace(UserReq userReq)
+        {
+            SingleRsp res = new();
+            var m = _rep.Read(userReq.IdentificationCode);
+            if (m != null)
+            {
+                m.FirstName = userReq.FirstName;
+                m.LastName = userReq.LastName;
+                m.Email = userReq.Email;
+                m.PhoneNumber = userReq.PhoneNumber;
+                res = Update(m);
+            }
             return res;
         }
     }
