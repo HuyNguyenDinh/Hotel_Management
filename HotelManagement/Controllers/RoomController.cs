@@ -37,6 +37,7 @@ namespace HotelManagement.Controllers
         [HttpPost]
         public ActionResult<SingleRsp> AddRoom([FromBody] RoomReq room)
         {
+
             var res = roomSvc.Create(room);
             if (res.Success)
                 return Ok(res);
