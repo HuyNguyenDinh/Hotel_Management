@@ -16,14 +16,22 @@ namespace HotelManagement.Controllers
         {
             roomSvc = new();
         }
+
         [HttpGet("q")]
         public ActionResult<MultipleRsp> GetAllRooms(bool? free, DateTime? dateStart, DateTime? dateEnd)
         {
             var res = new MultipleRsp();
             if (free != null && free.GetValueOrDefault())
-                res = roomSvc.GetFreeRoom();
+            {
+                if (dateStart != null && dateEnd != null)
+                    res = roomSvc.GetFreeRoom(dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault());
+                else
+                    res = roomSvc.GetFreeRoom();
+            }
             else
                 res = roomSvc.GetAll();
+            
+            
             return res;
         }
         [HttpGet("{id}")]
