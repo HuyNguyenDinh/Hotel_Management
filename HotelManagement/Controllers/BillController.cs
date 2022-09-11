@@ -8,49 +8,49 @@ namespace HotelManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RatingController : ControllerBase
+    public class BillController : ControllerBase
     {
-        RatingSvc ratingSvc;
-        public RatingController()
+        BillSvc billSvc;
+        public BillController()
         {
-            ratingSvc = new();
+            billSvc = new();
         }
         [HttpGet("q")]
-        public ActionResult<MultipleRsp> GetAllRating()
+        public ActionResult<MultipleRsp> GetAllBi()
         {
             var res = new MultipleRsp();
-            res = ratingSvc.GetAll();
+            res = billSvc.GetAll();
             return res;
         }
         [HttpGet("{id}")]
-        public ActionResult<SingleRsp> GetRating(int id)
+        public ActionResult<SingleRsp> GetBill(int id)
         {
-            var res = ratingSvc.Read(id);
+            var res = billSvc.Read(id);
             if (res.Success)
                 return Ok(res);
             return NotFound(res);
         }
         [HttpPost]
-        public ActionResult<SingleRsp> AddRating([FromBody] RatingReq rating)
+        public ActionResult<SingleRsp> AddBill([FromBody] BillReq bill)
         {
 
-            var res = ratingSvc.CreateRating(rating);
+            var res = billSvc.CreateBill(bill);
             if (res.Success)
                 return Ok(res);
             return BadRequest(res);
         }
         [HttpDelete("{id}")]
-        public ActionResult<SingleRsp> DeleteRating(int id)
+        public ActionResult<SingleRsp> DeleteBill(int id)
         {
-            var res = ratingSvc.Delete(id);
+            var res = billSvc.Delete(id);
             if (res.Success)
                 return Ok(res);
             return NotFound();
         }
         [HttpPut]
-        public ActionResult<SingleRsp> UpdateRating([FromBody] RatingReq ratingReq)
+        public ActionResult<SingleRsp> UpdateBill([FromBody] BillReq billReq)
         {
-            var res = ratingSvc.Replace(ratingReq);
+            var res = billSvc.Replace(billReq);
             if (res.Success)
                 return Ok(res);
             return NotFound();
