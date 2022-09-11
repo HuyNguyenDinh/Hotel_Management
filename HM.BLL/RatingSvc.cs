@@ -11,7 +11,7 @@ using HM.Common.Req;
 
 namespace HM.BLL
 {
-    public class BookingSvc : GenericSvc<BookingRep, Booking>
+    public class RatingSvc : GenericSvc<RatingRep, Rating>
     {
         public override SingleRsp Read(int id)
         {
@@ -21,35 +21,33 @@ namespace HM.BLL
                 res.SetError("404", "not found");
             else
             {
-                BookingReq result = new BookingReq
+                RatingReq result = new RatingReq
                 {
                     Id = m.Id,
-                    StartDate = m.StartDate,
-                    EndDate = m.EndDate,
-                    CheckIn = m.CheckIn,
-                    RoomId = m.RoomId,
+                    Rate = m.Rate,
+                    Comment = m.Comment,
                     UserId = m.UserId,
+                    RoomId = m.RoomId,
                 };
                 res.SetData("200", result);
             }
             return res;
         }
-        public SingleRsp CreateBooking(BookingReq bookingReq)
+        public SingleRsp CreateRating(RatingReq ratingReq)
         {
-            Booking? booking = new()
+            Rating? rating = new()
             {
-                StartDate = bookingReq.StartDate,
-                EndDate = bookingReq.EndDate,
-                CheckIn = bookingReq.CheckIn,
-                RoomId = bookingReq.RoomId,
-                UserId = bookingReq.UserId
+                Rate = ratingReq.Rate,
+                Comment = ratingReq.Comment,
+                UserId = ratingReq.UserId,
+                RoomId = ratingReq.RoomId
             };
-            var res = Create(booking);
+            var res = Create(rating);
             return res;
         }
         public override SingleRsp Delete(int id)
         {
-            Booking? m = _rep.Delete(id);
+            Rating? m = _rep.Delete(id);
             var res = new SingleRsp();
             if (m == null)
                 res.SetError("NotFound");
@@ -57,23 +55,21 @@ namespace HM.BLL
                 res.SetData("204", m);
             return res;
         }
-        public SingleRsp Replace(BookingReq bookingReq)
+        public SingleRsp Replace(RatingReq ratingReq)
         {
             SingleRsp res = new();
-            if (bookingReq.Id == null)
+            if (ratingReq.Id == null)
             {
                 res.SetError("Id can not be null");
                 return res;
             }
 
-            var m = _rep.Read(bookingReq.Id.GetValueOrDefault());
-
+            var m = _rep.Read(ratingReq.Id);
 
             if (m != null)
             {
-                m.StartDate = bookingReq.StartDate;
-                m.EndDate = bookingReq.EndDate;
-                m.CheckIn = bookingReq.CheckIn;
+                m.Rate = ratingReq.Rate;
+                m.Comment = ratingReq.Comment;
                 res = Update(m);
             }
             return res;

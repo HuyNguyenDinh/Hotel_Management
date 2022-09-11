@@ -9,49 +9,49 @@ namespace HotelManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookingController : ControllerBase
+    public class RatingController : ControllerBase
     {
-        BookingSvc bookingSvc;
-        public BookingController()
+        RatingSvc ratingSvc;
+        public RatingController()
         {
-            bookingSvc = new();
+            ratingSvc = new();
         }
         [HttpGet("q")]
-        public ActionResult<MultipleRsp> GetAllBooking(DateTime? dateStart, DateTime? dateEnd)
+        public ActionResult<MultipleRsp> GetAllRating()
         {
             var res = new MultipleRsp();
-            res = bookingSvc.GetAll();
+            res = ratingSvc.GetAll();
             return res;
         }
         [HttpGet("{id}")]
-        public ActionResult<SingleRsp> GetBooking(int id)
+        public ActionResult<SingleRsp> GetRating(int id)
         {
-            var res = bookingSvc.Read(id);
+            var res = ratingSvc.Read(id);
             if (res.Success)
                 return Ok(res);
             return NotFound(res);
         }
         [HttpPost]
-        public ActionResult<SingleRsp> AddBooking([FromBody] BookingReq booking)
+        public ActionResult<SingleRsp> AddRating([FromBody] RatingReq rating)
         {
 
-            var res = bookingSvc.CreateBooking(booking);
+            var res = ratingSvc.CreateRating(rating);
             if (res.Success)
                 return Ok(res);
             return BadRequest(res);
         }
         [HttpDelete("{id}")]
-        public ActionResult<SingleRsp> DeleteBooking(int id)
+        public ActionResult<SingleRsp> DeleteRating(int id)
         {
-            var res = bookingSvc.Delete(id);
+            var res = ratingSvc.Delete(id);
             if (res.Success)
                 return Ok(res);
             return NotFound();
         }
         [HttpPut]
-        public ActionResult<SingleRsp> UpdateBooking([FromBody] BookingReq bookingReq)
+        public ActionResult<SingleRsp> UpdateRating([FromBody] RatingReq ratingReq)
         {
-            var res = bookingSvc.Replace(bookingReq);
+            var res = ratingSvc.Replace(ratingReq);
             if (res.Success)
                 return Ok(res);
             return NotFound();
