@@ -22,5 +22,11 @@ namespace HM.DAL
                 res = Delete(res);
             return res;
         }
+        public IQueryable<Booking> FilterByDate(DateTime startDate, DateTime endDate)
+        {
+            IQueryable<Booking> bookings = All.AsQueryable();
+            bookings = bookings.Where(x => x.StartDate >= startDate && x.EndDate <= endDate);
+            return bookings;
+        }
     }
 }

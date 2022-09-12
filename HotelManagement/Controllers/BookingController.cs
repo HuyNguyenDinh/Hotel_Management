@@ -20,7 +20,14 @@ namespace HotelManagement.Controllers
         public ActionResult<MultipleRsp> GetAllBooking(DateTime? dateStart, DateTime? dateEnd)
         {
             var res = new MultipleRsp();
-            res = bookingSvc.GetAll();
+            if (dateStart != null && dateEnd != null)
+            {
+                res = bookingSvc.GetBookingFilterDate(dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault());
+            }
+            else
+            {
+                res = bookingSvc.GetAll();
+            }
             return res;
         }
         [HttpGet("{id}")]
@@ -30,6 +37,15 @@ namespace HotelManagement.Controllers
             if (res.Success)
                 return Ok(res);
             return NotFound(res);
+        }
+        [HttpPost("{id}/check-in")]
+        public ActionResult<SingleRsp> AddBookingChecking([FromBody] BookingReq booking)
+        {
+
+            var res = bookingSvc.CreateBooking(booking);
+            if (res.Success)
+                return Ok(res);
+            return BadRequest(res);
         }
         [HttpPost]
         public ActionResult<SingleRsp> AddBooking([FromBody] BookingReq booking)

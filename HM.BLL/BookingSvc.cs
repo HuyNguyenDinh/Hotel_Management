@@ -47,6 +47,24 @@ namespace HM.BLL
             var res = Create(booking);
             return res;
         }
+        public MultipleRsp GetBookingFilterDate(DateTime startDate, DateTime endDate)
+        {
+            var m = _rep.FilterByDate(startDate, endDate).Select(x => new BookingReq()
+            {
+                Id = x.Id,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                CheckIn = x.CheckIn,
+                RoomId = x.RoomId,
+                UserId = x.UserId,
+            }).ToList();
+            var res = new MultipleRsp();
+            if (m != null)
+                res.SetData(new List<object>(m), "200");
+            else
+                res.SetError("No booking at now");
+            return res;
+        }
         public override SingleRsp Delete(int id)
         {
             Booking? m = _rep.Delete(id);
