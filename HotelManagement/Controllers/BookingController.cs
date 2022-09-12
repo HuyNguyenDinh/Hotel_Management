@@ -20,7 +20,14 @@ namespace HotelManagement.Controllers
         public ActionResult<MultipleRsp> GetAllBooking(DateTime? dateStart, DateTime? dateEnd)
         {
             var res = new MultipleRsp();
-            res = bookingSvc.GetAll();
+            if (dateStart != null && dateEnd != null)
+            {
+                res = bookingSvc.GetBookingFilterDate(dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault());
+            }
+            else
+            {
+                res = bookingSvc.GetAll();
+            }
             return res;
         }
         [HttpGet("{id}")]
