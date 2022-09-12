@@ -104,5 +104,28 @@ namespace HM.BLL
             return res;
 
         }
+        public SingleRsp Update(RoomReq roomReq)
+        {
+            SingleRsp res;
+            if (roomReq.Id != null)
+            {
+                var m = _rep.Read(roomReq.Id.GetValueOrDefault());
+                if (m != null)
+                    res = Update(m);
+                else
+                {
+                    res = new SingleRsp();
+                    res.SetError("Not found");
+                }
+                    
+            }
+            else
+            {
+                res = new SingleRsp();
+                res.SetError("Id can not be null");
+            }
+            return res;
+        }
+
     }
 }
