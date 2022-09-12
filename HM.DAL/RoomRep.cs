@@ -22,5 +22,13 @@ namespace HM.DAL
                 res = Delete(res);
             return res;
         }
+        public IQueryable<Room> FilterByDate(DateTime startDate, DateTime endDate, bool free)
+        {
+            var bookings = Context.Bookings.Where(x => x.StartDate >= startDate && x.EndDate <= endDate).Select(x => x.RoomId).Distinct().ToList();
+            var res = All.Where(x => !bookings.Contains(x.Id));
+            if (free)
+                res.Where(x => x.IsFree == true);
+            return res;
+        }
     }
 }
