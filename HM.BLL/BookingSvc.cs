@@ -13,6 +13,8 @@ namespace HM.BLL
 {
     public class BookingSvc : GenericSvc<BookingRep, Booking>
     {
+        RoomSvc roomSvc;
+
         public override SingleRsp Read(int id)
         {
             var res = new SingleRsp();
@@ -40,11 +42,31 @@ namespace HM.BLL
             {
                 StartDate = bookingReq.StartDate,
                 EndDate = bookingReq.EndDate,
-                CheckIn = bookingReq.CheckIn,
+                CheckIn = false,
                 RoomId = bookingReq.RoomId,
                 UserId = bookingReq.UserId
             };
             var res = Create(booking);
+            return res;
+        }
+        public SingleRsp UpdateBookingChecking(BookingReq bookingReq, int id)
+        {
+            SingleRsp res = new();
+            roomSvc = new();
+            var checkId = roomSvc.Read(bookingReq.RoomId.GetValueOrDefault());
+
+            if (checkId == null)
+            {
+                res.SetError("Id of room is invalid");
+            }
+
+            var m = _rep.Read(id);
+            if (m != null)
+            {
+                m.CheckIn = true;
+                res = Update(m);
+            }
+
             return res;
         }
         public MultipleRsp GetBookingFilterDate(DateTime startDate, DateTime endDate)
