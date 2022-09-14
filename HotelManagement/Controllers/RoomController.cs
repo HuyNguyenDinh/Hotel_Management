@@ -67,6 +67,8 @@ namespace HotelManagement.Controllers
         [HttpPost("{id}/Booking")]
         public ActionResult<SingleRsp> Booking([FromBody] BookingReq bookingReq, int id)
         {
+            if (bookingReq.RoomId == null)
+                bookingReq.RoomId = id;
             if (id != bookingReq.RoomId)
             {
                 return BadRequest();
