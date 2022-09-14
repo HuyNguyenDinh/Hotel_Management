@@ -12,9 +12,11 @@ namespace HotelManagement.Controllers
     public class RoomController : ControllerBase
     {
         RoomSvc roomSvc;
+        BookingSvc bookingSvc;
         public RoomController()
         {
             roomSvc = new();
+            bookingSvc = new();
         }
 
         [HttpGet("q")]
@@ -29,9 +31,12 @@ namespace HotelManagement.Controllers
                     res = roomSvc.GetFreeRoom();
             }
             else
-                res = roomSvc.GetAll();
-            
-            
+            {
+                if (dateStart != null && dateEnd != null)
+                    res = roomSvc.GetAll(dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault());
+                else
+                    res = roomSvc.GetAll();
+            }
             return res;
         }
         [HttpGet("{id}")]
@@ -50,6 +55,26 @@ namespace HotelManagement.Controllers
             if (res.Success)
                 return Ok(res);
             return BadRequest(res);
+        }
+        [HttpPut]
+        public ActionResult<SingleRsp> UpdateRoom([FromBody] RoomReq roomReq)
+        {
+            var res = roomSvc.Update(roomReq);
+            if (res.Success)
+                return Ok(res);
+            return NotFound(res);
+        }
+        [HttpPost("{id}/Booking")]
+        public ActionResult<SingleRsp> Booking([FromBody] BookingReq bookingReq, int id)
+        {
+            if (id != bookingReq.RoomId)
+            {
+                return BadRequest();
+            }
+            var res = bookingSvc.CreateBooking(bookingReq);
+            if (res.Success)
+                return Ok(res);
+            return NotFound(res);
         }
     }
 }

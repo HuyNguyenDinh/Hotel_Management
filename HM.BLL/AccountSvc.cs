@@ -48,7 +48,7 @@ namespace HM.BLL
             if (m != null)
             {
                 if (m.Password.Equals(Hash.hashPassword(account.Password)))
-                    res.SetData("Login success", m.User);
+                    res.SetData("Login success", m.UserId);
                 else
                     res.SetError("Password not correct");
             }
