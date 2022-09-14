@@ -8,25 +8,19 @@ using HM.DAL.Models;
 
 namespace HM.DAL
 {
-    public class BookingRep : GenericRep<Hotel_ManagementContext, Booking>
+    public class RatingRep : GenericRep<Hotel_ManagementContext, Rating>
     {
-        public override Booking? Read(int id)
+        public override Rating? Read(int id)
         {
             var res = All.FirstOrDefault(x => x.Id == id);
             return res;
         }
-        public override Booking? Delete(int id)
+        public override Rating? Delete(int id)
         {
             var res = All.FirstOrDefault(u => u.Id == id);
             if (res != null)
                 res = Delete(res);
             return res;
-        }
-        public IQueryable<Booking> FilterByDate(DateTime startDate, DateTime endDate)
-        {
-            IQueryable<Booking> bookings = All.AsQueryable();
-            bookings = bookings.Where(x => x.StartDate >= startDate && x.EndDate <= endDate);
-            return bookings;
         }
     }
 }

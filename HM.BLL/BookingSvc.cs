@@ -13,6 +13,8 @@ namespace HM.BLL
 {
     public class BookingSvc : GenericSvc<BookingRep, Booking>
     {
+        RoomSvc roomSvc;
+
         public override SingleRsp Read(int id)
         {
             var res = new SingleRsp();
@@ -34,18 +36,55 @@ namespace HM.BLL
             }
             return res;
         }
-
         public SingleRsp CreateBooking(BookingReq bookingReq)
         {
             Booking? booking = new()
             {
                 StartDate = bookingReq.StartDate,
                 EndDate = bookingReq.EndDate,
-                CheckIn = bookingReq.CheckIn,
+                CheckIn = false,
                 RoomId = bookingReq.RoomId,
                 UserId = bookingReq.UserId
             };
             var res = Create(booking);
+            return res;
+        }
+        public SingleRsp UpdateBookingChecking(BookingReq bookingReq, int id)
+        {
+            SingleRsp res = new();
+            roomSvc = new();
+            var checkId = roomSvc.Read(bookingReq.RoomId.GetValueOrDefault());
+
+            if (checkId == null)
+            {
+                res.SetError("Id of room is invalid");
+            }
+
+            var m = _rep.Read(id);
+            if (m != null)
+            {
+                m.CheckIn = true;
+                res = Update(m);
+            }
+
+            return res;
+        }
+        public MultipleRsp GetBookingFilterDate(DateTime startDate, DateTime endDate)
+        {
+            var m = _rep.FilterByDate(startDate, endDate).Select(x => new BookingReq()
+            {
+                Id = x.Id,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                CheckIn = x.CheckIn,
+                RoomId = x.RoomId,
+                UserId = x.UserId,
+            }).ToList();
+            var res = new MultipleRsp();
+            if (m != null)
+                res.SetData(new List<object>(m), "200");
+            else
+                res.SetError("No booking at now");
             return res;
         }
         public override SingleRsp Delete(int id)
