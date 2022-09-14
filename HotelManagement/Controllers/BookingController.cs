@@ -38,15 +38,15 @@ namespace HotelManagement.Controllers
                 return Ok(res);
             return NotFound(res);
         }
-        [HttpPut("{id}/check-in")]
-        public ActionResult<SingleRsp> AddBookingChecking([FromBody] BookingReq booking, int id)
+        [HttpGet("{id}/check-in")]
+        public ActionResult<SingleRsp> AddBookingChecking(int id)
         {
             var checkId = bookingSvc.Read(id);
-            if (checkId == null)
+            if (!checkId.Success)
             {
                 return BadRequest("Id of booking is not valid");
             }
-            var res = bookingSvc.UpdateBookingChecking(booking, id);
+            var res = bookingSvc.UpdateBookingChecking(id);
             if (res.Success)
                 return Ok(res);
             return BadRequest(res);

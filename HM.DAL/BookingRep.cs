@@ -24,9 +24,14 @@ namespace HM.DAL
         }
         public IQueryable<Booking> FilterByDate(DateTime startDate, DateTime endDate)
         {
-            IQueryable<Booking> bookings = All.AsQueryable();
-            bookings = bookings.Where(x => x.StartDate >= startDate && x.EndDate <= endDate);
+            //var bookings = All.Where(x => x.StartDate >= startDate && x.EndDate <= endDate);
+            var bookings = All.Where(x => x.StartDate <= endDate && x.EndDate >= startDate);
             return bookings;
+        }
+        public List<Booking> BookingRoomInDateRange(DateTime startDate, DateTime endDate, int roomID) 
+        {
+            var booking = All.Where(x => x.StartDate <= endDate && x.EndDate >= startDate && x.RoomId == roomID);
+            return booking.ToList();
         }
     }
 }

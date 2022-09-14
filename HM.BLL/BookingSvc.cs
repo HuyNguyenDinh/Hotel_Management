@@ -14,6 +14,7 @@ namespace HM.BLL
     public class BookingSvc : GenericSvc<BookingRep, Booking>
     {
         RoomSvc roomSvc;
+        RoomRep roomRep;
 
         public override SingleRsp Read(int id)
         {
@@ -38,35 +39,55 @@ namespace HM.BLL
         }
         public SingleRsp CreateBooking(BookingReq bookingReq)
         {
-            Booking? booking = new()
+            SingleRsp res;
+            if (bookingReq.RoomId == null)
             {
-                StartDate = bookingReq.StartDate,
-                EndDate = bookingReq.EndDate,
-                CheckIn = false,
-                RoomId = bookingReq.RoomId,
-                UserId = bookingReq.UserId
-            };
-            var res = Create(booking);
+                res = new();
+                res.SetError("Room ID can not be null");
+            }
+            int id = bookingReq.RoomId.GetValueOrDefault();
+            var bookingRange = _rep.BookingRoomInDateRange(bookingReq.StartDate, bookingReq.EndDate, id);
+            if (bookingRange.Count > 0)
+            {
+                res = new();
+                res.SetError("There were bookings in date range");
+            }
+            else
+            {
+                Booking? booking = new()
+                {
+                    StartDate = bookingReq.StartDate,
+                    EndDate = bookingReq.EndDate,
+                    CheckIn = bookingReq.CheckIn,
+                    RoomId = bookingReq.RoomId,
+                    UserId = bookingReq.UserId
+                };
+                res = Create(booking);
+            }
             return res;
         }
-        public SingleRsp UpdateBookingChecking(BookingReq bookingReq, int id)
+        public SingleRsp UpdateBookingChecking(int id)
         {
-            SingleRsp res = new();
+            SingleRsp res;
             roomSvc = new();
-            var checkId = roomSvc.Read(bookingReq.RoomId.GetValueOrDefault());
-
-            if (checkId == null)
-            {
-                res.SetError("Id of room is invalid");
-            }
-
+            roomRep = new();
             var m = _rep.Read(id);
             if (m != null)
             {
                 m.CheckIn = true;
                 res = Update(m);
+                var room = roomRep.Read(m.RoomId.GetValueOrDefault());
+                if (room != null)
+                {
+                    room.IsFree = false;
+                    roomRep.Update(room);
+                }
             }
-
+            else
+            {
+                res = new();
+                res.SetError("No booking found");
+            }
             return res;
         }
         public MultipleRsp GetBookingFilterDate(DateTime startDate, DateTime endDate)

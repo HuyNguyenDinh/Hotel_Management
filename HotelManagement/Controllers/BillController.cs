@@ -31,10 +31,10 @@ namespace HotelManagement.Controllers
             return NotFound(res);
         }
         [HttpPost]
-        public ActionResult<SingleRsp> AddBill([FromBody] BillReq bill)
+        public ActionResult<SingleRsp> AddBill([FromBody] BookingIDReq bookingIDReq)
         {
-
-            var res = billSvc.CreateBill(bill);
+            int id = bookingIDReq.BookingId;
+            var res = billSvc.CreateBill(id);
             if (res.Success)
                 return Ok(res);
             return BadRequest(res);

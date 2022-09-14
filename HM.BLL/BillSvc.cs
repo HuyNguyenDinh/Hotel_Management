@@ -13,6 +13,8 @@ namespace HM.BLL
 {
     public class BillSvc : GenericSvc<BillRep, Bill>
     {
+        RoomRep roomRep;
+        BookingRep bookingRep;
         public override SingleRsp Read(int id)
         {
             var res = new SingleRsp();
@@ -31,15 +33,38 @@ namespace HM.BLL
             }
             return res;
         }
-        public SingleRsp CreateBill(BillReq billReq)
+        public SingleRsp CreateBill(int bookingId)
         {
-            Bill? bill = new()
+            roomRep = new();
+            bookingRep = new();
+            SingleRsp res;
+            var booking = bookingRep.Read(bookingId);
+            if (booking != null)
             {
-                Price = billReq.Price,
-                Humans = billReq.Humans,
-                BookingId = billReq.BookingId,
-            };
-            var res = Create(bill);
+                var room = roomRep.Read(booking.RoomId.GetValueOrDefault());
+                if (room != null)
+                {
+                    room.IsFree = true;
+                    roomRep.Update(room);
+                    Bill bill = new()
+                    {
+                        Price = (booking.EndDate - booking.StartDate).TotalDays * room.Price,
+                        Humans = room.MaxHumans,
+                        BookingId = booking.Id.GetValueOrDefault(),
+                    };
+                    res = Create(bill);
+                }
+                else
+                {
+                    res = new SingleRsp();
+                    res.SetError("400", "Room was invalid");
+                }
+            }
+            else
+            {
+                res = new SingleRsp();
+                res.SetError("404", "booking not found");
+            }
             return res;
         }
         public override SingleRsp Delete(int id)
